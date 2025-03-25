@@ -285,12 +285,14 @@ struct FaustHSlider<ViewModelType: FaustUIValueBinding>: View {
 
     @ViewBuilder
     private var render: some View {
+        let value = viewModel.getValue(for: address, default: range.lowerBound)
+        
         VStack(alignment: .center) {
             Text(label)
                 .multilineTextAlignment(.center)
                 .frame(height:25)
             
-            let value = viewModel.getValue(for: address, default: range.lowerBound)
+            
             if (value<range.lowerBound || value > range.upperBound)
             {
                 Text("Value out of range: \(viewModel.getValue(for: address, default: 0)) \(range.lowerBound) \(range.upperBound)")
@@ -309,8 +311,6 @@ struct FaustHSlider<ViewModelType: FaustUIValueBinding>: View {
                         .border(.black,width: 1)
                     
                     GeometryReader { geo in
-                        let value = viewModel.getValue(for: address, default: range.lowerBound)
-                        
                         let height = geo.size.height
                         let width = geo.size.width
                         let trackHeight = height * 0.25
@@ -395,12 +395,13 @@ struct FaustVSlider<ViewModelType: FaustUIValueBinding>: View {
 
     @ViewBuilder
     private var render: some View {
+        let value = viewModel.getValue(for: address, default: range.lowerBound)
         
         VStack(alignment: .center) {
             Text(label)
                 .multilineTextAlignment(.center)
             
-            let value = viewModel.getValue(for: address, default: range.lowerBound)
+            
             if (value<range.lowerBound || value > range.upperBound)
             {
                 Text("Value out of range: \(viewModel.getValue(for: address, default: 0)) \(range.lowerBound) \(range.upperBound)")
@@ -414,7 +415,6 @@ struct FaustVSlider<ViewModelType: FaustUIValueBinding>: View {
 //                VStack(){
                     
                     GeometryReader { geo in
-                        let value = viewModel.getValue(for: address, default: range.lowerBound)
                         
                         let width = geo.size.width
                         let height = geo.size.height
