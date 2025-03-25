@@ -2,7 +2,7 @@
 
 import SwiftUI
 
-public struct FaustSlider<ViewModelType: FaustUIViewModel>: View {
+public struct FaustSlider<ViewModelType: FaustUIValueBinding>: View {
     public let label: String
     public let address: String
     public let range: ClosedRange<Double>
@@ -51,7 +51,7 @@ public struct FaustSlider<ViewModelType: FaustUIViewModel>: View {
 
 // MARK: -
 
-public struct FaustCheckbox<ViewModelType: FaustUIViewModel>: View {
+public struct FaustCheckbox<ViewModelType: FaustUIValueBinding>: View {
     public let label: String
     public let address: String
     @ObservedObject public var viewModel: ViewModelType
@@ -67,7 +67,7 @@ public struct FaustCheckbox<ViewModelType: FaustUIViewModel>: View {
     @ViewBuilder
     private var render: some View {
         Toggle(isOn: Binding(
-            get: { viewModel.getValue(for: address) > 0.5 },
+            get: { viewModel.getValue(for: address, default: 0.0) > 0.5 },
             set: { viewModel.setValue($0 ? 1.0 : 0.0, for: address) }
         )) {
             Text(label)
@@ -77,7 +77,7 @@ public struct FaustCheckbox<ViewModelType: FaustUIViewModel>: View {
 
 // MARK: -
 
-public struct FaustButton<ViewModelType: FaustUIViewModel>: View {
+public struct FaustButton<ViewModelType: FaustUIValueBinding>: View {
     public let label: String
     public let address: String
     @ObservedObject public var viewModel: ViewModelType
@@ -107,7 +107,7 @@ public struct FaustButton<ViewModelType: FaustUIViewModel>: View {
 
 // MARK: -
 
-public struct FaustVBargraph<ViewModelType: FaustUIViewModel>: View {
+public struct FaustVBargraph<ViewModelType: FaustUIValueBinding>: View {
     public let label: String
     public let address: String
     public let min: Double
@@ -145,7 +145,7 @@ public struct FaustVBargraph<ViewModelType: FaustUIViewModel>: View {
 
 // MARK: -
 
-public struct FaustHBargraph<ViewModelType: FaustUIViewModel>: View {
+public struct FaustHBargraph<ViewModelType: FaustUIValueBinding>: View {
     public let label: String
     public let address: String
     public let min: Double
@@ -183,7 +183,7 @@ public struct FaustHBargraph<ViewModelType: FaustUIViewModel>: View {
 
 // MARK: -
 
-struct FaustNSwitch<ViewModelType: FaustUIViewModel>: View {
+struct FaustNSwitch<ViewModelType: FaustUIValueBinding>: View {
     public let label: String
     public let address: String
     let range: ClosedRange<Double>
@@ -242,7 +242,7 @@ struct FaustNSwitch<ViewModelType: FaustUIViewModel>: View {
 
 // MARK: -
 
-struct FaustHSlider<ViewModelType: FaustUIViewModel>: View {
+struct FaustHSlider<ViewModelType: FaustUIValueBinding>: View {
     public let label: String
     public let address: String
     let range: ClosedRange<Double>
@@ -323,7 +323,7 @@ struct FaustHSlider<ViewModelType: FaustUIViewModel>: View {
 
 // MARK: -
 
-struct FaustVSlider<ViewModelType: FaustUIViewModel>: View {
+struct FaustVSlider<ViewModelType: FaustUIValueBinding>: View {
     public let label: String
     public let address: String
     let range: ClosedRange<Double>
@@ -403,7 +403,7 @@ struct FaustVSlider<ViewModelType: FaustUIViewModel>: View {
 
 // MARK: -
 
-struct FaustKnob<ViewModelType: FaustUIViewModel>: View {
+struct FaustKnob<ViewModelType: FaustUIValueBinding>: View {
     public let label: String
     public let address: String
     public let range: ClosedRange<Double>

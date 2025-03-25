@@ -2,7 +2,7 @@
 
 import SwiftUI
 
-public struct FaustUIView<ViewModelType: FaustUIViewModel>: View {
+public struct FaustUIView<ViewModelType: FaustUIValueBinding>: View {
     public let ui: [FaustUI]
     @ObservedObject public var viewModel: ViewModelType
 
