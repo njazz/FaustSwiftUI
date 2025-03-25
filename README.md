@@ -29,10 +29,10 @@ FaustUIView(ui: ui, viewModel: FaustUIViewModel())
 | `tgroup`     | Tabbed group                   | ✅          |
 | `hslider`    | Horizontal slider              | ✅          |
 | `vslider`    | Vertical slider                | ❌          |
-| `nentry`     | Number entry box               | ❌          |
+| `nentry`     | Number entry box               | ✅          |
 | `button`     | Momentary push button          | ✅          |
 | `checkbox`   | Toggle button                  | ✅          |
-| `hbargraph`  | Horizontal bargraph            | ❌          |
+| `hbargraph`  | Horizontal bargraph            | ✅          |
 | `vbargraph`  | Vertical bargraph              | ✅          |
 
 ## Supported Styles (via `[style:...]` metadata)

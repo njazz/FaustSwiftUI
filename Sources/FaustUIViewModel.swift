@@ -9,7 +9,7 @@ public protocol FaustUIValueBinding: ObservableObject {
     func setValue(_ value: Double, for address: String)
 }
 
-public class FaustUIViewModel: ObservableObject {
+public class FaustUIViewModel: FaustUIValueBinding {
     @Published public var values: [String: Double] = [:]
 
     public init() {}
