@@ -9,7 +9,7 @@ let package = Package(
     name: "FaustSwiftUI",
     platforms: [
         .iOS(.v15),
-        .macOS(.v12)
+        .macOS(.v11)
     ],
     products: [
         .library(
