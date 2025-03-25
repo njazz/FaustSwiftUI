@@ -64,7 +64,7 @@ public struct FaustUIView<ViewModelType: FaustUIValueBinding>: View {
            let min = item.min,
            let max = item.max,
            let step = item.step {
-            FaustSlider(label: item.label, address: address, range: min ... max, step: step, viewModel: viewModel)
+            FaustVSlider(label: item.label, address: address, range: min ... max, step: step, viewModel: viewModel)
         }
 
         if [.hslider].contains(item.type),
@@ -72,7 +72,7 @@ public struct FaustUIView<ViewModelType: FaustUIValueBinding>: View {
            let min = item.min,
            let max = item.max,
            let step = item.step {
-            FaustSlider(label: item.label, address: address, range: min ... max, step: step, viewModel: viewModel)
+            FaustHSlider(label: item.label, address: address, range: min ... max, step: step, viewModel: viewModel)
         }
            
         // -----

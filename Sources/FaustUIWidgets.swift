@@ -2,52 +2,52 @@
 
 import SwiftUI
 
-public struct FaustSlider<ViewModelType: FaustUIValueBinding>: View {
-    public let label: String
-    public let address: String
-    public let range: ClosedRange<Double>
-    public let step: Double
-    @ObservedObject public var viewModel: ViewModelType
-
-    public init(label: String, address: String, range: ClosedRange<Double>, step: Double, viewModel: ViewModelType) {
-        self.label = label
-        self.address = address
-        self.range = range
-        self.step = step
-        self.viewModel = viewModel
-    }
-
-    public var body: some View { render }
-
-    @ViewBuilder
-    private var render: some View {
-        VStack(alignment: .leading) {
-            Text(label)
-                .multilineTextAlignment(.center)
-            
-            let value = viewModel.getValue(for: address, default: range.lowerBound)
-            if (value<range.lowerBound || value > range.upperBound)
-            {
-                Text("Value out of range: \(viewModel.getValue(for: address, default: 0)) \(range.lowerBound) \(range.upperBound)")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-            }            
-            else
-            {
-                HStack(){
-                    Text("\(viewModel.getValue(for: address, default: 0))")
-                        .frame(minWidth: 50, maxWidth: 100)
-                    
-                    Slider(value: Binding(
-                        get: { viewModel.getValue(for: address, default: range.lowerBound) }, // Ensure it returns a Double
-                        set: { viewModel.setValue($0, for: address) } // Ensure this updates the model correctly
-                    ), in: range/*, step: step*/)
-                    .frame(minWidth: 100, minHeight: 50)
-                }
-            }
-        }
-    }
-}
+//public struct FaustSlider<ViewModelType: FaustUIValueBinding>: View {
+//    public let label: String
+//    public let address: String
+//    public let range: ClosedRange<Double>
+//    public let step: Double
+//    @ObservedObject public var viewModel: ViewModelType
+//
+//    public init(label: String, address: String, range: ClosedRange<Double>, step: Double, viewModel: ViewModelType) {
+//        self.label = label
+//        self.address = address
+//        self.range = range
+//        self.step = step
+//        self.viewModel = viewModel
+//    }
+//
+//    public var body: some View { render }
+//
+//    @ViewBuilder
+//    private var render: some View {
+//        VStack(alignment: .leading) {
+//            Text(label)
+//                .multilineTextAlignment(.center)
+//            
+//            let value = viewModel.getValue(for: address, default: range.lowerBound)
+//            if (value<range.lowerBound || value > range.upperBound)
+//            {
+//                Text("Value out of range: \(viewModel.getValue(for: address, default: 0)) \(range.lowerBound) \(range.upperBound)")
+//                            .font(.caption)
+//                            .foregroundColor(.gray)
+//            }            
+//            else
+//            {
+//                HStack(){
+//                    Text("\(viewModel.getValue(for: address, default: 0))")
+//                        .frame(minWidth: 50, maxWidth: 100)
+//                    
+//                    Slider(value: Binding(
+//                        get: { viewModel.getValue(for: address, default: range.lowerBound) }, // Ensure it returns a Double
+//                        set: { viewModel.setValue($0, for: address) } // Ensure this updates the model correctly
+//                    ), in: range/*, step: step*/)
+//                    .frame(minWidth: 100, minHeight: 50)
+//                }
+//            }
+//        }
+//    }
+//}
 
 // MARK: -
 
@@ -92,16 +92,25 @@ public struct FaustButton<ViewModelType: FaustUIValueBinding>: View {
 
     @ViewBuilder
     private var render: some View {
-        Button(action: {
-            viewModel.setValue(1.0, for: address)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                viewModel.setValue(0.0, for: address)
+        VStack() {
+            Text("").frame(height: 25)
+            
+            Button(action: {
+                viewModel.setValue(1.0, for: address)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    viewModel.setValue(0.0, for: address)
+                }
+            }) {
+                Text(label)
+                    .padding()
+                    .cornerRadius(8)
+                    .frame(height: 25)
             }
-        }) {
-            Text(label)
-                .padding()
-                .cornerRadius(8)
+            .frame(height:25)
+            
+            Text("").frame(height: 25)
         }
+        .frame(height:50)
     }
 }
 
@@ -126,7 +135,7 @@ public struct FaustVBargraph<ViewModelType: FaustUIValueBinding>: View {
 
     @ViewBuilder
     private var render: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .center) {
             Text(label).frame(alignment: .center)
             GeometryReader { geometry in
                 let value = viewModel.getValue(for: address, default: min)
@@ -138,8 +147,9 @@ public struct FaustVBargraph<ViewModelType: FaustUIValueBinding>: View {
                 }
                 .cornerRadius(4)
             }
-            .frame(width: 100)
+            .frame(width: 25)
         }
+        .frame(width:50)
     }
 }
 
@@ -164,8 +174,9 @@ public struct FaustHBargraph<ViewModelType: FaustUIValueBinding>: View {
 
     @ViewBuilder
     private var render: some View {
-        HStack(alignment: .center) {
-            Text(label)
+        VStack(alignment: .center) {
+            Text(label).frame(height:25)
+            
             GeometryReader { geometry in
                 let value = viewModel.getValue(for: address, default: min)
                 let percent = CGFloat((value - min) / (max - min))
@@ -175,8 +186,11 @@ public struct FaustHBargraph<ViewModelType: FaustUIValueBinding>: View {
                         .frame(width: geometry.size.width * percent)
                 }
                 .cornerRadius(4)
+                .frame(height:25)
             }
-            .frame(height: 100)
+            .frame(height: 25)
+            
+            Text("").frame(height:25)
         }
     }
 }
@@ -207,36 +221,43 @@ struct FaustNSwitch<ViewModelType: FaustUIValueBinding>: View {
 
     @ViewBuilder
     private var render: some View {
-        TextField("Enter a number", text: $text)
+        VStack(alignment: .center) {
+            Text(label)
+                .multilineTextAlignment(.center)
+                .frame(height:25)
+            
+            TextField("Enter a number", text: $text)
             // .keyboardType(.decimalPad)
-            .onChange(of: text) { newValue in
-                var filtered = ""
-                var hasDecimalPoint = false
-
-                for (i, char) in newValue.enumerated() {
-                    if char.isWholeNumber {
-                        filtered.append(char)
-                    } else if char == "." && !hasDecimalPoint {
-                        if i == 0 || newValue[newValue.index(newValue.startIndex, offsetBy: i - 1)].isWholeNumber {
+                .onChange(of: text) { newValue in
+                    var filtered = ""
+                    var hasDecimalPoint = false
+                    
+                    for (i, char) in newValue.enumerated() {
+                        if char.isWholeNumber {
                             filtered.append(char)
-                        } else {
-                            filtered = "0."
+                        } else if char == "." && !hasDecimalPoint {
+                            if i == 0 || newValue[newValue.index(newValue.startIndex, offsetBy: i - 1)].isWholeNumber {
+                                filtered.append(char)
+                            } else {
+                                filtered = "0."
+                            }
+                            hasDecimalPoint = true
                         }
-                        hasDecimalPoint = true
+                    }
+                    
+                    if filtered != newValue {
+                        text = filtered
+                    }
+                    
+                    if let floatVal = Double(filtered) {
+                        let value = floatVal
+                        viewModel.setValue(value, for: address )
                     }
                 }
+                .textFieldStyle(SquareBorderTextFieldStyle())
+                .frame(width: 50, height: 25)
 
-                if filtered != newValue {
-                    text = filtered
-                }
-
-                if let floatVal = Double(filtered) {
-                    let value = floatVal
-                    viewModel.setValue(value, for: address )
-                }
-            }
-            .textFieldStyle(RoundedBorderTextFieldStyle())
-            .padding()
+        }
     }
 }
 
@@ -264,60 +285,89 @@ struct FaustHSlider<ViewModelType: FaustUIValueBinding>: View {
 
     @ViewBuilder
     private var render: some View {
-        GeometryReader { geo in
+        VStack(alignment: .center) {
+            Text(label)
+                .multilineTextAlignment(.center)
+                .frame(height:25)
+            
             let value = viewModel.getValue(for: address, default: range.lowerBound)
-            
-            let height = geo.size.height
-            let width = geo.size.width
-            let trackHeight = height * 0.25
-            let handleWidth = height * 0.33
-            // let totalSteps = (range.upperBound - range.lowerBound) / step
-            let normalized = CGFloat((value - range.lowerBound) / (range.upperBound - range.lowerBound))
-            let handleX = normalized * (width - handleWidth)
-            
-            ZStack(alignment: .leading) {
-                // Track
-                RoundedRectangle(cornerRadius: trackHeight / 2)
-                    .fill(Color.gray.opacity(0.3))
-                    .frame(height: trackHeight)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, (height - trackHeight) / 2)
-                
-                // Handle
-                RoundedRectangle(cornerRadius: handleWidth / 2)
-                    .fill(isDragging ? Color.accentColor : Color.primary.opacity(0.2))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: handleWidth / 2)
-                            .stroke(Color.accentColor, lineWidth: 2)
-                    )
-                    .frame(width: handleWidth, height: height)
-                    .position(x: handleX + handleWidth / 2, y: height / 2)
-                    .gesture(
-                        DragGesture(minimumDistance: 0)
-                            .onChanged { gesture in
-                                isDragging = true
-                                let location = gesture.location.x
-                                let clamped = min(max(location - handleWidth / 2, 0), width - handleWidth)
-                                let percent = clamped / (width - handleWidth)
-                                let stepped = (Double(percent) * (range.upperBound - range.lowerBound) / step).rounded() * step + range.lowerBound
-                                
-                                let value = min(max(stepped, range.lowerBound), range.upperBound)
-                                viewModel.setValue(value, for: address )
-                            }
-                            .onEnded { _ in
-                                isDragging = false
-                            }
-                    )
+            if (value<range.lowerBound || value > range.upperBound)
+            {
+                Text("Value out of range: \(viewModel.getValue(for: address, default: 0)) \(range.lowerBound) \(range.upperBound)")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                            .cornerRadius(0)
+                            
             }
-            .contentShape(Rectangle())
-            .onTapGesture(count: 2) {
-                // Reset on double-click
-                let mid = (range.lowerBound + range.upperBound) / 2
-                
-                let value = (mid / step).rounded() * step
-                viewModel.setValue(value, for: address )
+            else
+            {
+                HStack(){
+
+                    Text(String(format:"%.1f",viewModel.getValue(for: address, default: 0)))
+                        .frame(height:25)
+                        .frame(minWidth: 50, maxWidth: 100)
+                        .border(.black,width: 1)
+                    
+                    GeometryReader { geo in
+                        let value = viewModel.getValue(for: address, default: range.lowerBound)
+                        
+                        let height = geo.size.height
+                        let width = geo.size.width
+                        let trackHeight = height * 0.25
+                        let handleWidth = height * 0.33
+                        // let totalSteps = (range.upperBound - range.lowerBound) / step
+                        let normalized = CGFloat((value - range.lowerBound) / (range.upperBound - range.lowerBound))
+                        let handleX = normalized * (width - handleWidth)
+                        
+                        ZStack(alignment: .leading) {
+                            // Track
+                            RoundedRectangle(cornerRadius: trackHeight / 2)
+                                .fill(Color.gray.opacity(0.3))
+                                .frame(height: trackHeight)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, (height - trackHeight) / 2)
+                            
+                            // Handle
+                            RoundedRectangle(cornerRadius: handleWidth / 2)
+                                .fill(isDragging ? Color.accentColor : Color.primary.opacity(0.2))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: handleWidth / 2)
+                                        .stroke(Color.accentColor, lineWidth: 2)
+                                )
+                                .frame(width: handleWidth, height: height)
+                                .position(x: handleX + handleWidth / 2, y: height / 2)
+                                .gesture(
+                                    DragGesture(minimumDistance: 0)
+                                        .onChanged { gesture in
+                                            isDragging = true
+                                            let location = gesture.location.x
+                                            let clamped = min(max(location - handleWidth / 2, 0), width - handleWidth)
+                                            let percent = clamped / (width - handleWidth)
+                                            let stepped = (Double(percent) * (range.upperBound - range.lowerBound) / step).rounded() * step + range.lowerBound
+                                            
+                                            let value = min(max(stepped, range.lowerBound), range.upperBound)
+                                            viewModel.setValue(value, for: address )
+                                        }
+                                        .onEnded { _ in
+                                            isDragging = false
+                                        }
+                                )
+                        }
+                        .contentShape(Rectangle())
+                        .onTapGesture(count: 2) {
+                            // Reset on double-click
+                            let mid = (range.lowerBound + range.upperBound) / 2
+                            
+                            let value = (mid / step).rounded() * step
+                            viewModel.setValue(value, for: address )
+                        }
+                    }
+                    .frame(width:200, height: 50)
+                }
             }
         }
+        
+        
     }
 }
 
@@ -345,57 +395,88 @@ struct FaustVSlider<ViewModelType: FaustUIValueBinding>: View {
 
     @ViewBuilder
     private var render: some View {
-        GeometryReader { geo in
-            let value = viewModel.getValue(for: address, default: range.lowerBound)
+        
+        VStack(alignment: .center) {
+            Text(label)
+                .multilineTextAlignment(.center)
             
-            let width = geo.size.width
-            let height = geo.size.height
-            let trackWidth = width * 0.25
-            let handleHeight = width * 0.33
-            // let totalSteps = (range.upperBound - range.lowerBound) / step
-            let normalized = CGFloat((value - range.lowerBound) / (range.upperBound - range.lowerBound))
-            let handleY = (1.0 - normalized) * (height - handleHeight)
-
-            ZStack(alignment: .top) {
-                // Track
-                RoundedRectangle(cornerRadius: trackWidth / 2)
-                    .fill(Color.gray.opacity(0.3))
-                    .frame(width: trackWidth)
-                    .frame(maxHeight: .infinity)
-                    .padding(.horizontal, (width - trackWidth) / 2)
-
-                // Handle
-                RoundedRectangle(cornerRadius: handleHeight / 2)
-                    .fill(isDragging ? Color.accentColor : Color.primary.opacity(0.2))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: handleHeight / 2)
-                            .stroke(Color.accentColor, lineWidth: 2)
-                    )
-                    .frame(width: width, height: handleHeight)
-                    .position(x: width / 2, y: handleY + handleHeight / 2)
-                    .gesture(
-                        DragGesture(minimumDistance: 0)
-                            .onChanged { gesture in
-                                isDragging = true
-                                let location = gesture.location.y
-                                let clamped = min(max(location - handleHeight / 2, 0), height - handleHeight)
-                                let percent = 1.0 - (clamped / (height - handleHeight))
-                                let stepped = (Double(percent) * (range.upperBound - range.lowerBound) / step).rounded() * step + range.lowerBound
-                                
-                                let value = min(max(stepped, range.lowerBound), range.upperBound)
-                                viewModel.setValue(value, for: address )
-                            }
-                            .onEnded { _ in
-                                isDragging = false
-                            }
-                    )
-            }
-            .contentShape(Rectangle())
-            .onTapGesture(count: 2) {
-                let mid = (range.lowerBound + range.upperBound) / 2
+            let value = viewModel.getValue(for: address, default: range.lowerBound)
+            if (value<range.lowerBound || value > range.upperBound)
+            {
+                Text("Value out of range: \(viewModel.getValue(for: address, default: 0)) \(range.lowerBound) \(range.upperBound)")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+                    .cornerRadius(0)
                 
-                let value = (mid / step).rounded() * step
-                viewModel.setValue(value, for: address )
+            }
+            else
+            {
+//                VStack(){
+                    
+                    GeometryReader { geo in
+                        let value = viewModel.getValue(for: address, default: range.lowerBound)
+                        
+                        let width = geo.size.width
+                        let height = geo.size.height
+                        let trackWidth = width * 0.25
+                        let handleHeight = width * 0.33
+                        // let totalSteps = (range.upperBound - range.lowerBound) / step
+                        let normalized = CGFloat((value - range.lowerBound) / (range.upperBound - range.lowerBound))
+                        let handleY = (1.0 - normalized) * (height - handleHeight)
+                        
+                        ZStack(alignment: .top) {
+                            // Track
+                            RoundedRectangle(cornerRadius: trackWidth / 2)
+                                .fill(Color.gray.opacity(0.3))
+                                .frame(width: trackWidth)
+                                .frame(maxHeight: .infinity)
+                                .padding(.horizontal, (width - trackWidth) / 2)
+                            
+                            // Handle
+                            RoundedRectangle(cornerRadius: handleHeight / 2)
+                                .fill(isDragging ? Color.accentColor : Color.primary.opacity(0.2))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: handleHeight / 2)
+                                        .stroke(Color.accentColor, lineWidth: 2)
+                                )
+                                .frame(width: width, height: handleHeight)
+                                .position(x: width / 2, y: handleY + handleHeight / 2)
+                                .gesture(
+                                    DragGesture(minimumDistance: 0)
+                                        .onChanged { gesture in
+                                            isDragging = true
+                                            let location = gesture.location.y
+                                            let clamped = min(max(location - handleHeight / 2, 0), height - handleHeight)
+                                            let percent = 1.0 - (clamped / (height - handleHeight))
+                                            let stepped = (Double(percent) * (range.upperBound - range.lowerBound) / step).rounded() * step + range.lowerBound
+                                            
+                                            let value = min(max(stepped, range.lowerBound), range.upperBound)
+                                            viewModel.setValue(value, for: address )
+                                        }
+                                        .onEnded { _ in
+                                            isDragging = false
+                                        }
+                                )
+                        }
+                        .contentShape(Rectangle())
+                        .onTapGesture(count: 2) {
+                            let mid = (range.lowerBound + range.upperBound) / 2
+                            
+                            let value = (mid / step).rounded() * step
+                            viewModel.setValue(value, for: address )
+                        }
+                    }
+                    .frame(width: 50, height: 200)
+                    
+                    HStack() {
+                        Text(String(format:"%.1f",viewModel.getValue(for: address, default: 0)))
+                            .frame(minWidth: 50, maxWidth: 100)
+                            .cornerRadius(0).padding()
+                    }.frame(minWidth: 50, maxWidth: 50, maxHeight: 25).border(.black,width: 1)
+                    
+//                }
+                
+                
             }
         }
     }
