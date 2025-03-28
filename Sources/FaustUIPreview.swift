@@ -509,8 +509,8 @@ struct FaustUIView_Preview: PreviewProvider {
                 FaustUIView(ui: json, viewModel: viewModel)
                     .padding()
                 
-                    .frame(minWidth:800, maxWidth: .infinity, minHeight: 600,maxHeight: .infinity)
-                    .previewLayout(.sizeThatFits)
+                    .frame(minWidth:1200, maxWidth: .infinity, minHeight: 1200,maxHeight: .infinity)
+//                    .previewLayout(.sizeThatFits)
             }
         )
     }

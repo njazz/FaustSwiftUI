@@ -14,16 +14,21 @@ public struct FaustCheckbox: View {
 
     @ViewBuilder
     private var render: some View {
-        Toggle(isOn: Binding(
-            get: { value > 0.5 },
-            set: { value = $0 ? 1.0 : 0.0 }
-        )) {
-            Text(label)
+        VStack {
+            Toggle(isOn: Binding(
+                get: { value > 0.5 },
+                set: { value = $0 ? 1.0 : 0.0 }
+            )) {
+                Text(label)
+            }
+            .frame(minHeight: themeManager.theme.labelSize, maxHeight: themeManager.theme.labelSize * 2)
+//            .padding(.leading, themeManager.theme.padding)
+//            .padding(.trailing, themeManager.theme.padding)
+//                    .border(.black, width: 1)
         }
-        .frame(minHeight: themeManager.theme.labelSize, maxHeight: themeManager.theme.labelSize * 2)
         .padding(.leading, themeManager.theme.padding)
         .padding(.trailing, themeManager.theme.padding)
-        .border(.black, width: 1)
+        .frame(height: themeManager.theme.labelSize)
     }
 }
 
@@ -39,11 +44,7 @@ public struct FaustButton: View {
 
     @ViewBuilder
     private var render: some View {
-        VStack(alignment: .center, spacing: 0) {
-            Spacer()
-                .padding(0)
-                .frame(height: themeManager.theme.labelSize)
-
+        VStack(alignment: .leading, spacing: 0) {
             Button(action: {
                 value = 1.0
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -55,16 +56,12 @@ public struct FaustButton: View {
                     .cornerRadius(themeManager.theme.cornerRadius)
                     .frame(height: themeManager.theme.labelSize - 2)
             }
-
             .frame(height: themeManager.theme.labelSize)
-
-            Spacer().frame(height: themeManager.theme.labelSize * 0.5)
         }
-
-        .frame(minHeight: themeManager.theme.labelSize, maxHeight: themeManager.theme.labelSize * 2.5)
         .padding(.leading, themeManager.theme.padding)
         .padding(.trailing, themeManager.theme.padding)
-        .border(.black, width: 1)
+        .padding(.top, themeManager.theme.padding)
+        .padding(.bottom, themeManager.theme.padding)
     }
 }
 
@@ -84,8 +81,8 @@ public struct FaustVBargraph: View {
     private var render: some View {
         VStack(alignment: .center) {
             Text(label).frame(alignment: .center)
-            
-            VStack(alignment: .center, spacing:0){
+
+            VStack(alignment: .center, spacing: 0) {
                 GeometryReader { geometry in
                     let percent = CGFloat((value - min) / (max - min))
                     ZStack(alignment: .bottom) {
@@ -98,8 +95,8 @@ public struct FaustVBargraph: View {
                 .frame(width: 12.5)
                 .frame(height: themeManager.theme.sliderSize)
             }
-            
-            HStack(){
+
+            HStack {
                 Text(String(format: "%.1f", value))
                     .frame(height: themeManager.theme.labelSize)
                     .frame(minWidth: themeManager.theme.labelSize * 2, maxWidth: themeManager.theme.labelSize * 3)
@@ -110,12 +107,11 @@ public struct FaustVBargraph: View {
             .padding(.leading, themeManager.theme.padding)
             .padding(.trailing, themeManager.theme.padding)
         }
-        .frame(width: themeManager.theme.labelSize*2.5)
+        .frame(width: themeManager.theme.labelSize * 2.5)
         .padding(.leading, themeManager.theme.padding)
         .padding(.trailing, themeManager.theme.padding)
         .padding(.top, themeManager.theme.padding)
         .padding(.bottom, themeManager.theme.padding)
-        .border(.black,width:1)
     }
 }
 
@@ -144,7 +140,7 @@ public struct FaustHBargraph: View {
                 .foregroundColor(themeManager.theme.numboxTextColor)
                 .cornerRadius(themeManager.theme.cornerRadius)
 
-            Spacer().frame(height: themeManager.theme.labelSize * 0.5)
+            Spacer().frame(height: themeManager.theme.labelSize * 1)
         }
     }
 
@@ -170,10 +166,10 @@ public struct FaustHBargraph: View {
             .frame(width: themeManager.theme.sliderSize)
         }
 
-        .frame(height: themeManager.theme.labelSize * 2.5)
+        .frame(height: themeManager.theme.labelSize * 3)
+        .frame(width: themeManager.theme.labelSize * 2 + themeManager.theme.sliderSize)
         .padding(.leading, themeManager.theme.padding)
         .padding(.trailing, themeManager.theme.padding)
-        .border(.black, width: 1)
     }
 }
 
@@ -203,18 +199,18 @@ struct FaustNSwitch: View {
 
     @ViewBuilder
     private var render: some View {
-        HStack (spacing:0) {
+        HStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 0) {
                 Text(label)
                     .multilineTextAlignment(.center)
                     .frame(height: themeManager.theme.labelSize)
-                
+
                 TextField("Enter a number", text: $text)
-                // .keyboardType(.decimalPad)
+                    // .keyboardType(.decimalPad)
                     .onChange(of: text) { newValue in
                         var filtered = ""
                         var hasDecimalPoint = false
-                        
+
                         for (i, char) in newValue.enumerated() {
                             if char.isWholeNumber {
                                 filtered.append(char)
@@ -227,27 +223,27 @@ struct FaustNSwitch: View {
                                 hasDecimalPoint = true
                             }
                         }
-                        
+
                         if filtered != newValue {
                             text = filtered
                         }
-                        
+
                         if let floatVal = Double(filtered) {
                             value = floatVal
                         }
                     }
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .frame(width: themeManager.theme.labelSize * 2, height: themeManager.theme.labelSize)
-                
+                    .frame(height: themeManager.theme.labelSize)
+                    .frame(minWidth: themeManager.theme.labelSize * 2, maxWidth: themeManager.theme.labelSize * 3)
+
                 Spacer()
-                    .frame(height: themeManager.theme.labelSize * 0.5)
+                    .frame(height: themeManager.theme.labelSize * 1)
             }
         }
-        .frame(height: themeManager.theme.labelSize * 2.5)
-        .frame(width: themeManager.theme.labelSize * 3 )
+        .frame(height: themeManager.theme.labelSize * 3)
+        .frame(minWidth: themeManager.theme.labelSize * 2, maxWidth: themeManager.theme.labelSize * 3)
         .padding(.leading, themeManager.theme.padding)
         .padding(.trailing, themeManager.theme.padding)
-        .border(.black, width: 1)
     }
 }
 
@@ -271,7 +267,6 @@ struct FaustHSlider: View {
         VStack(alignment: .leading, spacing: 0) {
             Text(label)
                 .frame(height: themeManager.theme.labelSize)
-                .frame(minWidth: themeManager.theme.labelSize * 2, maxWidth: themeManager.theme.labelSize * 3)
 
             Text(String(format: "%.1f", value))
                 .frame(height: themeManager.theme.labelSize)
@@ -279,25 +274,24 @@ struct FaustHSlider: View {
                 .background(themeManager.theme.numboxBackgroundColor)
                 .foregroundColor(themeManager.theme.numboxTextColor)
                 .cornerRadius(themeManager.theme.cornerRadius)
+
+            Spacer()
+                .frame(height: themeManager.theme.labelSize)
         }
     }
 
     @ViewBuilder
     private var render: some View {
-
-        HStack(alignment: .top) {
+        HStack(alignment: .center) {
             render_label
 
-            if value < range.lowerBound || value > range.upperBound {
-                Text("Value out of range: \(value) \(range.lowerBound) \(range.upperBound)")
-                    .font(.caption)
-                    .foregroundColor(.gray)
-                    .cornerRadius(0)
-            } else {
-                VStack(spacing: 0) {
-                    Spacer()
-                        .frame(height: 12.5)
-
+            VStack(spacing: 0) {
+                if value < range.lowerBound || value > range.upperBound {
+                    Text("Value out of range: \(value) \(range.lowerBound) \(range.upperBound)")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                        .cornerRadius(0)
+                } else {
                     GeometryReader { geo in
                         let height = geo.size.height * 0.75
                         let width = geo.size.width
@@ -352,10 +346,10 @@ struct FaustHSlider: View {
                 }
             }
         }
-        .frame(height: themeManager.theme.labelSize * 2.5)
+        .frame(height: themeManager.theme.labelSize * 3)
+        .frame(width: themeManager.theme.labelSize * 2 + themeManager.theme.sliderSize)
         .padding(.leading, themeManager.theme.padding)
         .padding(.trailing, themeManager.theme.padding)
-        .border(.black, width: 1)
     }
 }
 
@@ -376,11 +370,11 @@ struct FaustVSlider: View {
 
     @ViewBuilder
     private var render: some View {
-        HStack(spacing:0){
+        HStack(spacing: 0) {
             VStack(alignment: .center) {
                 Text(label)
                     .multilineTextAlignment(.center)
-                
+
                 if value < range.lowerBound || value > range.upperBound {
                     Text("Value out of range: \(value) \(range.lowerBound) \(range.upperBound)")
                         .font(.caption)
@@ -388,15 +382,15 @@ struct FaustVSlider: View {
                         .cornerRadius(0)
                 } else {
                     GeometryReader { geo in
-                        
+
                         let width = geo.size.width * 0.75
                         let height = geo.size.height
                         let trackWidth = geo.size.width * 0.25
-                        let handleHeight = trackWidth * 1.5;//width * 0.4
+                        let handleHeight = trackWidth * 1.5 // width * 0.4
                         // let totalSteps = (range.upperBound - range.lowerBound) / step
                         let normalized = CGFloat((value - range.lowerBound) / (range.upperBound - range.lowerBound))
                         let handleY = (1.0 - normalized) * (height - handleHeight)
-                        
+
                         ZStack(alignment: .top) {
                             // Track
                             RoundedRectangle(cornerRadius: themeManager.theme.cornerRadius)
@@ -404,7 +398,7 @@ struct FaustVSlider: View {
                                 .frame(width: trackWidth)
                                 .frame(maxHeight: .infinity)
                                 .padding(.horizontal, (width - trackWidth) / 2)
-                            
+
                             // Handle
                             RoundedRectangle(cornerRadius: themeManager.theme.cornerRadius)
                                 .fill(isDragging ? Color.accentColor : Color.primary.opacity(0.2))
@@ -422,7 +416,7 @@ struct FaustVSlider: View {
                                             let clamped = min(max(location - handleHeight / 2, 0), height - handleHeight)
                                             let percent = 1.0 - (clamped / (height - handleHeight))
                                             let stepped = (Double(percent) * (range.upperBound - range.lowerBound) / step).rounded() * step + range.lowerBound
-                                            
+
                                             value = min(max(stepped, range.lowerBound), range.upperBound)
                                         }
                                         .onEnded { _ in
@@ -433,16 +427,16 @@ struct FaustVSlider: View {
                         .contentShape(Rectangle())
                         .onTapGesture(count: 2) {
                             let mid = (range.lowerBound + range.upperBound) / 2
-                            
+
                             value = (mid / step).rounded() * step
                         }
                     }
-                    .frame(width: themeManager.theme.labelSize*2, height: themeManager.theme.sliderSize)
+                    .frame(width: themeManager.theme.labelSize * 2, height: themeManager.theme.sliderSize)
 
-                    HStack{
+                    HStack {
                         Text(String(format: "%.1f", value))
                             .frame(height: themeManager.theme.labelSize)
-                            .frame(minWidth: themeManager.theme.labelSize*2, maxWidth: themeManager.theme.labelSize*4)
+                            .frame(minWidth: themeManager.theme.labelSize * 2, maxWidth: themeManager.theme.labelSize * 4)
                             .background(themeManager.theme.numboxBackgroundColor)
                             .foregroundColor(themeManager.theme.numboxTextColor)
                             .cornerRadius(themeManager.theme.cornerRadius)
@@ -453,8 +447,8 @@ struct FaustVSlider: View {
             }
         }
         .padding(themeManager.theme.padding)
-        .frame(width: themeManager.theme.labelSize * 3 )
-        .border(.black, width:1)
+        .frame(width: themeManager.theme.labelSize * 3)
+//        .border(.black, width:1)
     }
 }
 
