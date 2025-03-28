@@ -8,17 +8,22 @@ public struct FaustCheckbox: View {
     public let label: String
     public let address: String
     @Binding var value: Double
+    @EnvironmentObject var themeManager: FaustThemeManager
 
     public var body: some View { render }
 
     @ViewBuilder
     private var render: some View {
         Toggle(isOn: Binding(
-            get: { value > 0.5  },
-            set: { value = $0 ? 1.0 : 0.0  }
+            get: { value > 0.5 },
+            set: { value = $0 ? 1.0 : 0.0 }
         )) {
             Text(label)
         }
+        .frame(minHeight: themeManager.theme.labelSize, maxHeight: themeManager.theme.labelSize * 2)
+        .padding(.leading, themeManager.theme.padding)
+        .padding(.trailing, themeManager.theme.padding)
+        .border(.black, width: 1)
     }
 }
 
@@ -28,13 +33,16 @@ public struct FaustButton: View {
     public let label: String
     public let address: String
     @Binding var value: Double
+    @EnvironmentObject var themeManager: FaustThemeManager
 
     public var body: some View { render }
 
     @ViewBuilder
     private var render: some View {
-        VStack {
-            Text("").frame(height: 25)
+        VStack(alignment: .center, spacing: 0) {
+            Spacer()
+                .padding(0)
+                .frame(height: themeManager.theme.labelSize)
 
             Button(action: {
                 value = 1.0
@@ -44,14 +52,19 @@ public struct FaustButton: View {
             }) {
                 Text(label)
                     .padding()
-                    .cornerRadius(8)
-                    .frame(height: 25)
+                    .cornerRadius(themeManager.theme.cornerRadius)
+                    .frame(height: themeManager.theme.labelSize - 2)
             }
-            .frame(height: 25)
 
-            Text("").frame(height: 25)
+            .frame(height: themeManager.theme.labelSize)
+
+            Spacer().frame(height: themeManager.theme.labelSize * 0.5)
         }
-        .frame(height: 50)
+
+        .frame(minHeight: themeManager.theme.labelSize, maxHeight: themeManager.theme.labelSize * 2.5)
+        .padding(.leading, themeManager.theme.padding)
+        .padding(.trailing, themeManager.theme.padding)
+        .border(.black, width: 1)
     }
 }
 
@@ -63,6 +76,7 @@ public struct FaustVBargraph: View {
     public let min: Double
     public let max: Double
     @Binding var value: Double
+    @EnvironmentObject var themeManager: FaustThemeManager
 
     public var body: some View { render }
 
@@ -70,18 +84,38 @@ public struct FaustVBargraph: View {
     private var render: some View {
         VStack(alignment: .center) {
             Text(label).frame(alignment: .center)
-            GeometryReader { geometry in
-                let percent = CGFloat((value - min) / (max - min))
-                ZStack(alignment: .bottom) {
-                    Rectangle().fill(Color.gray.opacity(0.2))
-                    Rectangle().fill(Color.green)
-                        .frame(height: geometry.size.height * percent)
+            
+            VStack(alignment: .center, spacing:0){
+                GeometryReader { geometry in
+                    let percent = CGFloat((value - min) / (max - min))
+                    ZStack(alignment: .bottom) {
+                        Rectangle().fill(Color.gray.opacity(0.2))
+                        Rectangle().fill(Color.green)
+                            .frame(height: geometry.size.height * percent)
+                    }
+                    .cornerRadius(themeManager.theme.cornerRadius)
                 }
-                .cornerRadius(4)
+                .frame(width: 12.5)
+                .frame(height: themeManager.theme.sliderSize)
             }
-            .frame(width: 25)
+            
+            HStack(){
+                Text(String(format: "%.1f", value))
+                    .frame(height: themeManager.theme.labelSize)
+                    .frame(minWidth: themeManager.theme.labelSize * 2, maxWidth: themeManager.theme.labelSize * 3)
+                    .background(themeManager.theme.numboxBackgroundColor)
+                    .foregroundColor(themeManager.theme.numboxTextColor)
+                    .cornerRadius(themeManager.theme.cornerRadius)
+            }
+            .padding(.leading, themeManager.theme.padding)
+            .padding(.trailing, themeManager.theme.padding)
         }
-        .frame(width: 50)
+        .frame(width: themeManager.theme.labelSize*2.5)
+        .padding(.leading, themeManager.theme.padding)
+        .padding(.trailing, themeManager.theme.padding)
+        .padding(.top, themeManager.theme.padding)
+        .padding(.bottom, themeManager.theme.padding)
+        .border(.black,width:1)
     }
 }
 
@@ -93,28 +127,53 @@ public struct FaustHBargraph: View {
     public let min: Double
     public let max: Double
     @Binding var value: Double
+    @EnvironmentObject var themeManager: FaustThemeManager
 
     public var body: some View { render }
 
     @ViewBuilder
-    private var render: some View {
-        VStack(alignment: .center) {
-            Text(label).frame(height: 25)
+    private var render_label: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text(label)
+                .frame(height: themeManager.theme.labelSize)
 
-            GeometryReader { geometry in
-                let percent = CGFloat((value - min) / (max - min))
-                ZStack(alignment: .leading) {
-                    Rectangle().fill(Color.gray.opacity(0.2))
-                    Rectangle().fill(Color.green)
-                        .frame(width: geometry.size.width * percent)
-                }
-                .cornerRadius(4)
-                .frame(height: 25)
-            }
-            .frame(height: 25)
+            Text(String(format: "%.1f", value))
+                .frame(height: themeManager.theme.labelSize)
+                .frame(minWidth: themeManager.theme.labelSize * 2, maxWidth: themeManager.theme.labelSize * 3)
+                .background(themeManager.theme.numboxBackgroundColor)
+                .foregroundColor(themeManager.theme.numboxTextColor)
+                .cornerRadius(themeManager.theme.cornerRadius)
 
-            Text("").frame(height: 25)
+            Spacer().frame(height: themeManager.theme.labelSize * 0.5)
         }
+    }
+
+    @ViewBuilder
+    private var render: some View {
+        HStack(alignment: .top) {
+            render_label
+
+            VStack(alignment: .center, spacing: 0) {
+                Spacer().frame(height: themeManager.theme.labelSize)
+                GeometryReader { geometry in
+                    let percent = CGFloat((value - min) / (max - min))
+                    ZStack(alignment: .leading) {
+                        Rectangle().fill(Color.gray.opacity(0.2))
+                        Rectangle().fill(Color.green)
+                            .frame(width: geometry.size.width * percent)
+                    }
+                    .cornerRadius(themeManager.theme.cornerRadius)
+                }
+                .frame(height: themeManager.theme.labelSize * 0.5)
+            }
+            .frame(height: themeManager.theme.labelSize * 2)
+            .frame(width: themeManager.theme.sliderSize)
+        }
+
+        .frame(height: themeManager.theme.labelSize * 2.5)
+        .padding(.leading, themeManager.theme.padding)
+        .padding(.trailing, themeManager.theme.padding)
+        .border(.black, width: 1)
     }
 }
 
@@ -126,6 +185,7 @@ struct FaustNSwitch: View {
     let range: ClosedRange<Double>
     let step: Double
     @Binding var value: Double
+    @EnvironmentObject var themeManager: FaustThemeManager
 
     @State private var text: String
 
@@ -134,7 +194,7 @@ struct FaustNSwitch: View {
         self.address = address
         self.range = range
         self.step = step
-        self._value = value
+        _value = value
 
         _text = State(initialValue: String(value.wrappedValue))
     }
@@ -143,41 +203,51 @@ struct FaustNSwitch: View {
 
     @ViewBuilder
     private var render: some View {
-        VStack(alignment: .center) {
-            Text(label)
-                .multilineTextAlignment(.center)
-                .frame(height: 25)
-
-            TextField("Enter a number", text: $text)
+        HStack (spacing:0) {
+            VStack(alignment: .leading, spacing: 0) {
+                Text(label)
+                    .multilineTextAlignment(.center)
+                    .frame(height: themeManager.theme.labelSize)
+                
+                TextField("Enter a number", text: $text)
                 // .keyboardType(.decimalPad)
-                .onChange(of: text) { newValue in
-                    var filtered = ""
-                    var hasDecimalPoint = false
-
-                    for (i, char) in newValue.enumerated() {
-                        if char.isWholeNumber {
-                            filtered.append(char)
-                        } else if char == "." && !hasDecimalPoint {
-                            if i == 0 || newValue[newValue.index(newValue.startIndex, offsetBy: i - 1)].isWholeNumber {
+                    .onChange(of: text) { newValue in
+                        var filtered = ""
+                        var hasDecimalPoint = false
+                        
+                        for (i, char) in newValue.enumerated() {
+                            if char.isWholeNumber {
                                 filtered.append(char)
-                            } else {
-                                filtered = "0."
+                            } else if char == "." && !hasDecimalPoint {
+                                if i == 0 || newValue[newValue.index(newValue.startIndex, offsetBy: i - 1)].isWholeNumber {
+                                    filtered.append(char)
+                                } else {
+                                    filtered = "0."
+                                }
+                                hasDecimalPoint = true
                             }
-                            hasDecimalPoint = true
+                        }
+                        
+                        if filtered != newValue {
+                            text = filtered
+                        }
+                        
+                        if let floatVal = Double(filtered) {
+                            value = floatVal
                         }
                     }
-
-                    if filtered != newValue {
-                        text = filtered
-                    }
-
-                    if let floatVal = Double(filtered) {
-                        value = floatVal
-                    }
-                }
-                .textFieldStyle(SquareBorderTextFieldStyle())
-                .frame(width: 50, height: 25)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .frame(width: themeManager.theme.labelSize * 2, height: themeManager.theme.labelSize)
+                
+                Spacer()
+                    .frame(height: themeManager.theme.labelSize * 0.5)
+            }
         }
+        .frame(height: themeManager.theme.labelSize * 2.5)
+        .frame(width: themeManager.theme.labelSize * 3 )
+        .padding(.leading, themeManager.theme.padding)
+        .padding(.trailing, themeManager.theme.padding)
+        .border(.black, width: 1)
     }
 }
 
@@ -188,8 +258,8 @@ struct FaustHSlider: View {
     public let address: String
     let range: ClosedRange<Double>
     let step: Double
-
     @Binding var value: Double
+    @EnvironmentObject var themeManager: FaustThemeManager
 
     @State private var isDragging = false
     @GestureState private var dragOffset: CGSize = .zero
@@ -197,12 +267,26 @@ struct FaustHSlider: View {
     public var body: some View { render }
 
     @ViewBuilder
+    private var render_label: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text(label)
+                .frame(height: themeManager.theme.labelSize)
+                .frame(minWidth: themeManager.theme.labelSize * 2, maxWidth: themeManager.theme.labelSize * 3)
+
+            Text(String(format: "%.1f", value))
+                .frame(height: themeManager.theme.labelSize)
+                .frame(minWidth: themeManager.theme.labelSize * 2, maxWidth: themeManager.theme.labelSize * 3)
+                .background(themeManager.theme.numboxBackgroundColor)
+                .foregroundColor(themeManager.theme.numboxTextColor)
+                .cornerRadius(themeManager.theme.cornerRadius)
+        }
+    }
+
+    @ViewBuilder
     private var render: some View {
 
-        VStack(alignment: .center) {
-            Text(label)
-                .multilineTextAlignment(.center)
-                .frame(height: 25)
+        HStack(alignment: .top) {
+            render_label
 
             if value < range.lowerBound || value > range.upperBound {
                 Text("Value out of range: \(value) \(range.lowerBound) \(range.upperBound)")
@@ -210,38 +294,36 @@ struct FaustHSlider: View {
                     .foregroundColor(.gray)
                     .cornerRadius(0)
             } else {
-                HStack {
-                    Text(String(format: "%.1f", value))
-                        .frame(height: 25)
-                        .frame(minWidth: 50, maxWidth: 100)
-                        .border(.black, width: 1)
+                VStack(spacing: 0) {
+                    Spacer()
+                        .frame(height: 12.5)
 
                     GeometryReader { geo in
-                        let height = geo.size.height
+                        let height = geo.size.height * 0.75
                         let width = geo.size.width
-                        let trackHeight = height * 0.25
-                        let handleWidth = height * 0.33
+                        let trackHeight = geo.size.height * 0.25
+                        let handleWidth = trackHeight * 1.5
                         // let totalSteps = (range.upperBound - range.lowerBound) / step
                         let normalized = CGFloat((value - range.lowerBound) / (range.upperBound - range.lowerBound))
                         let handleX = normalized * (width - handleWidth)
 
                         ZStack(alignment: .leading) {
                             // Track
-                            RoundedRectangle(cornerRadius: trackHeight / 2)
+                            RoundedRectangle(cornerRadius: themeManager.theme.cornerRadius)
                                 .fill(Color.gray.opacity(0.3))
                                 .frame(height: trackHeight)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, (height - trackHeight) / 2)
 
                             // Handle
-                            RoundedRectangle(cornerRadius: handleWidth / 2)
+                            RoundedRectangle(cornerRadius: themeManager.theme.cornerRadius)
                                 .fill(isDragging ? Color.accentColor : Color.primary.opacity(0.2))
                                 .overlay(
-                                    RoundedRectangle(cornerRadius: handleWidth / 2)
-                                        .stroke(Color.accentColor, lineWidth: 2)
+                                    RoundedRectangle(cornerRadius: themeManager.theme.cornerRadius)
+                                        .stroke(Color.accentColor, lineWidth: 1.5)
                                 )
                                 .frame(width: handleWidth, height: height)
-                                .position(x: handleX + handleWidth / 2, y: height / 2)
+                                .position(x: handleX + handleWidth / 2, y: height * 0.67)
                                 .gesture(
                                     DragGesture(minimumDistance: 0)
                                         .onChanged { gesture in
@@ -265,10 +347,15 @@ struct FaustHSlider: View {
                             value = (mid / step).rounded() * step
                         }
                     }
-                    .frame(width: 200, height: 50)
+                    .frame(height: themeManager.theme.labelSize * 2)
+                    .frame(width: themeManager.theme.sliderSize)
                 }
             }
         }
+        .frame(height: themeManager.theme.labelSize * 2.5)
+        .padding(.leading, themeManager.theme.padding)
+        .padding(.trailing, themeManager.theme.padding)
+        .border(.black, width: 1)
     }
 }
 
@@ -280,6 +367,7 @@ struct FaustVSlider: View {
     let range: ClosedRange<Double>
     let step: Double
     @Binding var value: Double
+    @EnvironmentObject var themeManager: FaustThemeManager
 
     @State private var isDragging = false
     @GestureState private var dragOffset: CGSize = .zero
@@ -288,77 +376,85 @@ struct FaustVSlider: View {
 
     @ViewBuilder
     private var render: some View {
-        VStack(alignment: .center) {
-            Text(label)
-                .multilineTextAlignment(.center)
-
-            if value < range.lowerBound || value > range.upperBound {
-                Text("Value out of range: \(value) \(range.lowerBound) \(range.upperBound)")
-                    .font(.caption)
-                    .foregroundColor(.gray)
-                    .cornerRadius(0)
-            } else {
-
-                GeometryReader { geo in
-
-                    let width = geo.size.width
-                    let height = geo.size.height
-                    let trackWidth = width * 0.25
-                    let handleHeight = width * 0.33
-                    // let totalSteps = (range.upperBound - range.lowerBound) / step
-                    let normalized = CGFloat((value - range.lowerBound) / (range.upperBound - range.lowerBound))
-                    let handleY = (1.0 - normalized) * (height - handleHeight)
-
-                    ZStack(alignment: .top) {
-                        // Track
-                        RoundedRectangle(cornerRadius: trackWidth / 2)
-                            .fill(Color.gray.opacity(0.3))
-                            .frame(width: trackWidth)
-                            .frame(maxHeight: .infinity)
-                            .padding(.horizontal, (width - trackWidth) / 2)
-
-                        // Handle
-                        RoundedRectangle(cornerRadius: handleHeight / 2)
-                            .fill(isDragging ? Color.accentColor : Color.primary.opacity(0.2))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: handleHeight / 2)
-                                    .stroke(Color.accentColor, lineWidth: 2)
-                            )
-                            .frame(width: width, height: handleHeight)
-                            .position(x: width / 2, y: handleY + handleHeight / 2)
-                            .gesture(
-                                DragGesture(minimumDistance: 0)
-                                    .onChanged { gesture in
-                                        isDragging = true
-                                        let location = gesture.location.y
-                                        let clamped = min(max(location - handleHeight / 2, 0), height - handleHeight)
-                                        let percent = 1.0 - (clamped / (height - handleHeight))
-                                        let stepped = (Double(percent) * (range.upperBound - range.lowerBound) / step).rounded() * step + range.lowerBound
-
-                                        value = min(max(stepped, range.lowerBound), range.upperBound)
-                                    }
-                                    .onEnded { _ in
-                                        isDragging = false
-                                    }
-                            )
+        HStack(spacing:0){
+            VStack(alignment: .center) {
+                Text(label)
+                    .multilineTextAlignment(.center)
+                
+                if value < range.lowerBound || value > range.upperBound {
+                    Text("Value out of range: \(value) \(range.lowerBound) \(range.upperBound)")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                        .cornerRadius(0)
+                } else {
+                    GeometryReader { geo in
+                        
+                        let width = geo.size.width * 0.75
+                        let height = geo.size.height
+                        let trackWidth = geo.size.width * 0.25
+                        let handleHeight = trackWidth * 1.5;//width * 0.4
+                        // let totalSteps = (range.upperBound - range.lowerBound) / step
+                        let normalized = CGFloat((value - range.lowerBound) / (range.upperBound - range.lowerBound))
+                        let handleY = (1.0 - normalized) * (height - handleHeight)
+                        
+                        ZStack(alignment: .top) {
+                            // Track
+                            RoundedRectangle(cornerRadius: themeManager.theme.cornerRadius)
+                                .fill(Color.gray.opacity(0.3))
+                                .frame(width: trackWidth)
+                                .frame(maxHeight: .infinity)
+                                .padding(.horizontal, (width - trackWidth) / 2)
+                            
+                            // Handle
+                            RoundedRectangle(cornerRadius: themeManager.theme.cornerRadius)
+                                .fill(isDragging ? Color.accentColor : Color.primary.opacity(0.2))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: themeManager.theme.cornerRadius)
+                                        .stroke(Color.accentColor, lineWidth: 2)
+                                )
+                                .frame(width: width, height: handleHeight)
+                                .position(x: width * 0.67, y: handleY + handleHeight / 2)
+                                .gesture(
+                                    DragGesture(minimumDistance: 0)
+                                        .onChanged { gesture in
+                                            isDragging = true
+                                            let location = gesture.location.y
+                                            let clamped = min(max(location - handleHeight / 2, 0), height - handleHeight)
+                                            let percent = 1.0 - (clamped / (height - handleHeight))
+                                            let stepped = (Double(percent) * (range.upperBound - range.lowerBound) / step).rounded() * step + range.lowerBound
+                                            
+                                            value = min(max(stepped, range.lowerBound), range.upperBound)
+                                        }
+                                        .onEnded { _ in
+                                            isDragging = false
+                                        }
+                                )
+                        }
+                        .contentShape(Rectangle())
+                        .onTapGesture(count: 2) {
+                            let mid = (range.lowerBound + range.upperBound) / 2
+                            
+                            value = (mid / step).rounded() * step
+                        }
                     }
-                    .contentShape(Rectangle())
-                    .onTapGesture(count: 2) {
-                        let mid = (range.lowerBound + range.upperBound) / 2
+                    .frame(width: themeManager.theme.labelSize*2, height: themeManager.theme.sliderSize)
 
-                        value = (mid / step).rounded() * step
+                    HStack{
+                        Text(String(format: "%.1f", value))
+                            .frame(height: themeManager.theme.labelSize)
+                            .frame(minWidth: themeManager.theme.labelSize*2, maxWidth: themeManager.theme.labelSize*4)
+                            .background(themeManager.theme.numboxBackgroundColor)
+                            .foregroundColor(themeManager.theme.numboxTextColor)
+                            .cornerRadius(themeManager.theme.cornerRadius)
                     }
+                    .padding(.leading, themeManager.theme.padding)
+                    .padding(.trailing, themeManager.theme.padding)
                 }
-                .frame(width: 50, height: 200)
-
-                HStack {
-                    Text(String(format: "%.1f", value))
-                        .frame(minWidth: 50, maxWidth: 100)
-                        .cornerRadius(0).padding()
-                }.frame(minWidth: 50, maxWidth: 50, maxHeight: 25).border(.black, width: 1)
-
             }
         }
+        .padding(themeManager.theme.padding)
+        .frame(width: themeManager.theme.labelSize * 3 )
+        .border(.black, width:1)
     }
 }
 
@@ -370,6 +466,7 @@ struct FaustKnob: View {
     public let range: ClosedRange<Double>
     public let step: Double
     @Binding var value: Double
+    @EnvironmentObject var themeManager: FaustThemeManager
 
     private let thickness: CGFloat = 12.0
     private let totalAngle: Angle = .degrees(315)
@@ -380,7 +477,7 @@ struct FaustKnob: View {
     @ViewBuilder
     private var render: some View {
         GeometryReader { geometry in
-            
+
             let size = min(geometry.size.width, geometry.size.height)
             let center = CGPoint(x: size / 2, y: size / 2)
             let radius = (size - thickness) / 2

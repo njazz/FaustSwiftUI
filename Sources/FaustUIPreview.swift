@@ -483,84 +483,6 @@ struct FaustUIView_Preview: PreviewProvider {
     ]
 """#
         
-//        let testJSON = #"""
-//[ 
-//        {
-//            "type": "vgroup",
-//            "label": "mydsp",
-//            "items": [ 
-//                {
-//                    "type": "hslider",
-//                    "label": "hslider",
-//                    "varname": "fHslider0",
-//                    "shortname": "mydsp_hslider",
-//                    "address": "/mydsp/hslider",
-//                    "init": 0.5,
-//                    "min": 0,
-//                    "max": 1,
-//                    "step": 0.01
-//                },
-//                {
-//                    "type": "tgroup",
-//                    "label": "v1",
-//                    "items": [ 
-//                        {
-//                            "type": "hgroup",
-//                            "label": "h1",
-//                            "items": [ 
-//                                {
-//                                    "type": "nentry",
-//                                    "label": "button",
-//                                    "varname": "fEntry0",
-//                                    "shortname": "button",
-//                                    "address": "/mydsp/v1/h1/button",
-//                                    "init": 0.5,
-//                                    "min": 0,
-//                                    "max": 1,
-//                                    "step": 0.01
-//                                },
-//                                {
-//                                    "type": "vslider",
-//                                    "label": "vslider",
-//                                    "varname": "fVslider0",
-//                                    "shortname": "vslider",
-//                                    "address": "/mydsp/v1/h1/vslider",
-//                                    "init": 0.5,
-//                                    "min": 0,
-//                                    "max": 1,
-//                                    "step": 0.01
-//                                }
-//                            ]
-//                        },
-//                        {
-//                            "type": "hslider",
-//                            "label": "hslider",
-//                            "varname": "fHslider1",
-//                            "shortname": "v1_hslider",
-//                            "address": "/mydsp/v1/hslider",
-//                            "init": 0.5,
-//                            "min": 0,
-//                            "max": 1,
-//                            "step": 0.01
-//                        },
-//                        {
-//                            "type": "nentry",
-//                            "label": "nentry",
-//                            "varname": "fEntry1",
-//                            "shortname": "nentry",
-//                            "address": "/mydsp/v1/nentry",
-//                            "init": 0.5,
-//                            "min": 0,
-//                            "max": 1,
-//                            "step": 0.01
-//                        }
-//                    ]
-//                }
-//            ]
-//        }
-//    ]
-//"""#;
-        
         // example
         let decoder = JSONDecoder()
         do {
@@ -574,14 +496,22 @@ struct FaustUIView_Preview: PreviewProvider {
         
         // Use @StateObject in the preview so that the viewModel is correctly managed by SwiftUI
         let viewModel = FaustUIViewModel()
-        viewModel.setValue(100, for: "/cutoff")
-        viewModel.setValue(0.3, for: "/level")
         
-        return AnyView(FaustUIView(ui: json, viewModel: viewModel)
-            .padding()
+        // some test values added:
+        viewModel.setValue(100, for: "/grp_1/hmisc/hbar")
+        viewModel.setValue(64, for: "/grp_1/hmisc/hslider")
+        viewModel.setValue(32, for: "/grp_1/hmisc/vbar")
+        viewModel.setValue(64, for: "/grp_1/hmisc/vslider4")
+        
+        return AnyView(
             
-            .frame(minWidth:800, maxWidth: .infinity, minHeight: 600,maxHeight: .infinity)
-            .previewLayout(.sizeThatFits)
+            ScrollView ([.horizontal, .vertical]) {
+                FaustUIView(ui: json, viewModel: viewModel)
+                    .padding()
+                
+                    .frame(minWidth:800, maxWidth: .infinity, minHeight: 600,maxHeight: .infinity)
+                    .previewLayout(.sizeThatFits)
+            }
         )
     }
 }

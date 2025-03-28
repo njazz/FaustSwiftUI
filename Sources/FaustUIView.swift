@@ -6,6 +6,8 @@ public struct FaustUIView<ViewModelType: FaustUIValueBinding>: View {
     public let ui: [FaustUI]
     @ObservedObject public var viewModel: ViewModelType
 
+    @StateObject private var themeManager = FaustThemeManager()
+
     public init(ui: [FaustUI], viewModel: ViewModelType) {
         self.ui = ui
         self.viewModel = viewModel
@@ -16,14 +18,14 @@ public struct FaustUIView<ViewModelType: FaustUIValueBinding>: View {
             ForEach(ui) { item in
                 render(item)
             }
-        }
+        }.environmentObject(themeManager)
     }
 
     @ViewBuilder
     private func render(_ item: FaustUI) -> some View {
         if [.vgroup].contains(item.type), let items = item.items {
             GroupBox(label: Text(item.label)) {
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: themeManager.theme.groupSpacing) {
                     ForEach(items) { child in
                         AnyView(render(child))
                     }
@@ -33,7 +35,7 @@ public struct FaustUIView<ViewModelType: FaustUIValueBinding>: View {
 
         if [.hgroup].contains(item.type), let items = item.items {
             GroupBox(label: Text(item.label)) {
-                HStack(alignment: .center) {
+                HStack(alignment: .center, spacing: themeManager.theme.groupSpacing) {
                     ForEach(items) { child in
                         AnyView(render(child))
                     }
@@ -74,7 +76,7 @@ public struct FaustUIView<ViewModelType: FaustUIValueBinding>: View {
            let step = item.step {
             FaustHSlider(label: item.label, address: address, range: min ... max, step: step, value: binding(for: address, default: min))
         }
-           
+
         // -----
         if item.type == .checkbox,
            let address = item.address {
@@ -94,10 +96,9 @@ public struct FaustUIView<ViewModelType: FaustUIValueBinding>: View {
             FaustNSwitch(label: item.label, address: address, range: min ... max, step: step, value: binding(for: address, default: min))
         }
 
-        // -----        
+        // -----
         if item.type == .vbargraph,
-           let address = item.address
-            {
+           let address = item.address {
             FaustVBargraph(label: item.label, address: address, min: item.min ?? 0.0, max: item.max ?? 1.0, value: binding(for: address, default: 0))
                 .frame(idealWidth: 45, maxWidth: 45)
         }
@@ -110,19 +111,19 @@ public struct FaustUIView<ViewModelType: FaustUIValueBinding>: View {
 
         EmptyView()
     }
-    
-    // Helper function to create bindings for values stored in the viewModel
-        private func binding<T>(for address: String, default defaultValue: T) -> Binding<T> where T: BinaryFloatingPoint {
-            return Binding(
-                get: { T(viewModel.getValue(for: address, default: Double(defaultValue))) },
-                set: { newValue in viewModel.setValue(Double(newValue), for: address) }
-            )
-        }
 
-        private func binding(for address: String, default defaultValue: Bool) -> Binding<Bool> {
-            return Binding(
-                get: { viewModel.getValue(for: address, default: 0.0) != 0.0 },
-                set: { newValue in viewModel.setValue(newValue ? 1.0 : 0.0, for: address) }
-            )
-        }
+    // Helper function to create bindings for values stored in the viewModel
+    private func binding<T>(for address: String, default defaultValue: T) -> Binding<T> where T: BinaryFloatingPoint {
+        return Binding(
+            get: { T(viewModel.getValue(for: address, default: Double(defaultValue))) },
+            set: { newValue in viewModel.setValue(Double(newValue), for: address) }
+        )
+    }
+
+    private func binding(for address: String, default defaultValue: Bool) -> Binding<Bool> {
+        return Binding(
+            get: { viewModel.getValue(for: address, default: 0.0) != 0.0 },
+            set: { newValue in viewModel.setValue(newValue ? 1.0 : 0.0, for: address) }
+        )
+    }
 }
