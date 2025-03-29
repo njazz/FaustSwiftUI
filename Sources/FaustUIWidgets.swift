@@ -463,54 +463,86 @@ struct FaustKnob: View {
     @EnvironmentObject var themeManager: FaustThemeManager
 
     private let thickness: CGFloat = 12.0
-    private let totalAngle: Angle = .degrees(315)
-    private let startAngle: Angle = .degrees(112.5) // leaves 45° gap at bottom
+    private let totalAngle: Angle = .degrees(300)
+    private let startAngle: Angle = .degrees(120) // leaves 60° gap at bottom
 
     public var body: some View { render }
 
     @ViewBuilder
     private var render: some View {
-        GeometryReader { geometry in
+        HStack(spacing: 0) {
+            VStack(alignment: .center) {
+                Text(label)
+                    .multilineTextAlignment(.center)
 
-            let size = min(geometry.size.width, geometry.size.height)
-            let center = CGPoint(x: size / 2, y: size / 2)
-            let radius = (size - thickness) / 2
-            let angle = totalAngle.radians * Double(value)
-            let endAngle = startAngle + Angle(radians: angle)
+                GeometryReader { geometry in
 
-            ZStack {
-                // Background fill
-                Circle()
-                    .fill(Color.gray.opacity(0.2))
+                    let size = min(geometry.size.width, geometry.size.height)
+                    let center = CGPoint(x: size / 2, y: size / 2)
+                    let radius = (size - thickness) / 2
+                    let offset = Angle(degrees:1)
+                    let angle = (totalAngle.radians - offset.radians) * Double(value)
+                    let endAngle = startAngle + offset + Angle(radians: angle)   // offset added
+                    
+                    let height = geometry.size.height
 
-                // Arc
-                Path { path in
-                    path.addArc(
-                        center: center,
-                        radius: radius,
-                        startAngle: startAngle,
-                        endAngle: endAngle,
-                        clockwise: false
+                    ZStack {
+                        // Background fill
+                        Circle()
+                            .fill(Color.gray.opacity(0.2))
+
+                        // Arc
+                        Path { path in
+                            path.addArc(
+                                center: center,
+                                radius: radius,
+                                startAngle: startAngle,
+                                endAngle: endAngle,
+                                clockwise: false
+                            )
+                        }
+                        .stroke(Color.accentColor, style: StrokeStyle(lineWidth: thickness, lineCap: .round))
+                    }
+                    .gesture(
+                        DragGesture()
+                            .onChanged { gesture in
+//                                let vector = CGVector(dx: gesture.location.x - center.x,
+//                                                      dy: gesture.location.y - center.y)
+//                                let angle = atan2(vector.dy, vector.dx) + .pi / 2
+//                                var normalized = (angle < 0 ? angle + 2 * .pi : angle) / (2 * .pi)
+//
+//                                // Map to 315 degrees range (-157.5° to +157.5°)
+//                                normalized = (normalized - 0.125).truncatingRemainder(dividingBy: 0.875)
+//                                if normalized < 0 { normalized += 0.875 }
+//
+//                                value = Double(normalized / 0.875)
+                                
+//                                isDragging = true
+                                let location = gesture.location.y
+                                let clamped = min(max(location - 0 / 2, 0), height - 0)
+                                let percent = 1.0 - (clamped / (height - 0))
+                                
+//                                let stepped = (Double(percent) * (range.upperBound - range.lowerBound) / step).rounded() * step + range.lowerBound
+
+                                value = min(max(percent, 0), 1)
+                            }
                     )
                 }
-                .stroke(Color.accentColor, style: StrokeStyle(lineWidth: thickness, lineCap: .round))
+                .aspectRatio(1, contentMode: .fit)
+                
+                HStack {
+                    Text(String(format: "%.1f", value))
+                        .frame(height: themeManager.theme.labelSize)
+                        .frame(minWidth: themeManager.theme.labelSize * 2, maxWidth: themeManager.theme.labelSize * 4)
+                        .background(themeManager.theme.numboxBackgroundColor)
+                        .foregroundColor(themeManager.theme.numboxTextColor)
+                        .cornerRadius(themeManager.theme.cornerRadius)
+                }
+                .padding(.leading, themeManager.theme.padding)
+                .padding(.trailing, themeManager.theme.padding)
             }
-            .gesture(
-                DragGesture()
-                    .onChanged { gesture in
-                        let vector = CGVector(dx: gesture.location.x - center.x,
-                                              dy: gesture.location.y - center.y)
-                        let angle = atan2(vector.dy, vector.dx) + .pi / 2
-                        var normalized = (angle < 0 ? angle + 2 * .pi : angle) / (2 * .pi)
-
-                        // Map to 315 degrees range (-157.5° to +157.5°)
-                        normalized = (normalized - 0.125).truncatingRemainder(dividingBy: 0.875)
-                        if normalized < 0 { normalized += 0.875 }
-
-                        value = Double(normalized / 0.875)
-                    }
-            )
         }
-        .aspectRatio(1, contentMode: .fit)
+        .padding(themeManager.theme.padding)
+        .frame(width: themeManager.theme.labelSize * 3)
     }
 }

@@ -20,10 +20,26 @@ public struct FaustUIView<ViewModelType: FaustUIValueBinding>: View {
             }
         }.environmentObject(themeManager)
     }
+    
+    private func isKnob(_ item: FaustUI) -> Bool {
+        if let meta = item.meta {
+            for e in meta{
+                if let style = e.style {
+                    if style == .knob {
+                        return true
+                    }
+                }
+            }
+        }
+        return false
+    }
 
     @ViewBuilder
     private func render(_ item: FaustUI) -> some View {
-        if [.vgroup].contains(item.type), let items = item.items {
+        // style: knob
+        let isKnob = isKnob(item)
+        
+        if item.type == .vgroup, let items = item.items {
             GroupBox(label: Text(item.label)) {
                 VStack(alignment: .leading, spacing: themeManager.theme.groupSpacing) {
                     ForEach(items) { child in
@@ -33,7 +49,7 @@ public struct FaustUIView<ViewModelType: FaustUIValueBinding>: View {
             }
         }
 
-        if [.hgroup].contains(item.type), let items = item.items {
+        if item.type == .hgroup, let items = item.items {
             GroupBox(label: Text(item.label)) {
                 HStack(alignment: .center, spacing: themeManager.theme.groupSpacing) {
                     ForEach(items) { child in
@@ -43,7 +59,7 @@ public struct FaustUIView<ViewModelType: FaustUIValueBinding>: View {
             }
         }
 
-        if [.tgroup].contains(item.type), let items = item.items {
+        if item.type == .tgroup, let items = item.items {
             AnyView(
                 GroupBox(label: Text(item.label)) {
                     TabView {
@@ -61,7 +77,7 @@ public struct FaustUIView<ViewModelType: FaustUIValueBinding>: View {
         }
 
         // -----
-        if [.vslider].contains(item.type),
+        if item.type == .vslider && !isKnob,
            let address = item.address,
            let min = item.min,
            let max = item.max,
@@ -69,12 +85,20 @@ public struct FaustUIView<ViewModelType: FaustUIValueBinding>: View {
             FaustVSlider(label: item.label, address: address, range: min ... max, step: step, value: binding(for: address, default: min))
         }
 
-        if [.hslider].contains(item.type),
+        if item.type == .hslider && !isKnob,
            let address = item.address,
            let min = item.min,
            let max = item.max,
            let step = item.step {
             FaustHSlider(label: item.label, address: address, range: min ... max, step: step, value: binding(for: address, default: min))
+        }
+        
+        if (item.type == .hslider || item.type == .vslider) && isKnob,
+           let address = item.address,
+           let min = item.min,
+           let max = item.max,
+           let step = item.step {
+            FaustKnob(label: item.label, address: address, range: min ... max, step: step, value: binding(for: address, default: min))
         }
 
         // -----
