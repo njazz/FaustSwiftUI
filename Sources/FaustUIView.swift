@@ -37,7 +37,7 @@ public struct FaustUIView<ViewModelType: FaustUIValueBinding>: View {
     private func isHidden(_ item: FaustUI) -> Bool {
         if let meta = item.meta {
             for e in meta{
-                if e.hidden == 1 { return true }
+                if e.hidden == "1" { return true }
             }
         }
         return false

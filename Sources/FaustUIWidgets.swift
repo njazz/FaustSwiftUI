@@ -481,7 +481,10 @@ struct FaustKnob: View {
                     let center = CGPoint(x: size / 2, y: size / 2)
                     let radius = (size - thickness) / 2
                     let offset = Angle(degrees:1)
-                    let angle = (totalAngle.radians - offset.radians) * Double(value)
+                    
+                    let normalized = CGFloat((value - range.lowerBound) / (range.upperBound - range.lowerBound))
+                    
+                    let angle = (totalAngle.radians - offset.radians) * Double(normalized)
                     let endAngle = startAngle + offset + Angle(radians: angle)   // offset added
                     
                     let height = geometry.size.height
@@ -506,25 +509,14 @@ struct FaustKnob: View {
                     .gesture(
                         DragGesture()
                             .onChanged { gesture in
-//                                let vector = CGVector(dx: gesture.location.x - center.x,
-//                                                      dy: gesture.location.y - center.y)
-//                                let angle = atan2(vector.dy, vector.dx) + .pi / 2
-//                                var normalized = (angle < 0 ? angle + 2 * .pi : angle) / (2 * .pi)
-//
-//                                // Map to 315 degrees range (-157.5° to +157.5°)
-//                                normalized = (normalized - 0.125).truncatingRemainder(dividingBy: 0.875)
-//                                if normalized < 0 { normalized += 0.875 }
-//
-//                                value = Double(normalized / 0.875)
-                                
-//                                isDragging = true
+
                                 let location = gesture.location.y
                                 let clamped = min(max(location - 0 / 2, 0), height - 0)
                                 let percent = 1.0 - (clamped / (height - 0))
                                 
-//                                let stepped = (Double(percent) * (range.upperBound - range.lowerBound) / step).rounded() * step + range.lowerBound
+                                let scaled = (Double(percent) * (range.upperBound - range.lowerBound))  + range.lowerBound
 
-                                value = min(max(percent, 0), 1)
+                                value = min(max(scaled, range.lowerBound), range.upperBound)
                             }
                     )
                 }

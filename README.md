@@ -10,6 +10,7 @@ This is a SwiftUI-based dynamic UI renderer for Faust DSP JSON metadata. It pars
 - 🔄 UI-to-DSP input controls (`hslider`, `vslider`, `checkbox`, `button` ...)
 - 🔄 DSP-to-UI output monitors (`hbargraph`, `vbargraph`)
 - 🔄 Style metadata (`knob`, `menu`, `radio` ...)
+- ❌ Load default values from JSON layout to ViewModel
 
 ## Usage
 
