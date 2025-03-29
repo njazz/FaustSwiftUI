@@ -58,7 +58,11 @@ hmisc = 		hgroup("hmisc",
 					hslider("hslider", 60, 0, 127, 0.1),
 					nentry("num [unit:f]", 60, 0, 127, 0.1),
 					vbargraph("vbar", 0, 127),
-					hbargraph("hbar", 0, 127));
+					hbargraph("hbar", 0, 127),
+                    // added extra types:
+                    vslider("radio1[style:radio{'Noise':0;'Sawtooth':1}]",0,0,1,1),
+                    vslider("menu1[style:menu{'Noise':0;'Sawtooth':1}]",0,0,1,1)
+                    );
 
 //------------------------- Process --------------------------------
 

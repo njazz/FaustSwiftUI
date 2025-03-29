@@ -3,10 +3,10 @@
 	"filename": "uitester.dsp",
 	"version": "2.78.1",
 	"compile_options": "-lang cpp -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 0",
-	"include_pathnames": ["/Users/alex/Documents/ios-macmini/Faust-2.75.7/share/faust","/usr/local/share/faust","/usr/share/faust",".","/Users/alex/Documents/ios-macmini/QLFAUST-FULL/FaustSwiftUI"],
-	"size": 140,
+	"include_pathnames": ["/Users/alex/Documents/ios-macmini/Faust-2.75.7/share/faust","/usr/local/share/faust","/usr/share/faust",".","/Users/alex/Documents/ios-macmini/FaustSwiftUI/Tests"],
+	"size": 148,
 	"inputs": 6,
-	"outputs": 34,
+	"outputs": 36,
 	"meta": [ 
 		{ "author": "O. Guillerminet" },
 		{ "compile_options": "-lang cpp -ct 1 -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 0" },
@@ -53,6 +53,20 @@
 							"step": 0.1
 						},
 						{
+							"type": "vslider",
+							"label": "menu1",
+							"varname": "fVslider18",
+							"shortname": "menu1",
+							"address": "/grp_1/hmisc/menu1",
+							"meta": [
+								{ "style": "menu{'Noise':0;'Sawtooth':1}" }
+							],
+							"init": 0,
+							"min": 0,
+							"max": 1,
+							"step": 1
+						},
+						{
 							"type": "nentry",
 							"label": "num",
 							"varname": "fEntry4",
@@ -65,6 +79,20 @@
 							"min": 0,
 							"max": 127,
 							"step": 0.1
+						},
+						{
+							"type": "vslider",
+							"label": "radio1",
+							"varname": "fVslider17",
+							"shortname": "radio1",
+							"address": "/grp_1/hmisc/radio1",
+							"meta": [
+								{ "style": "radio{'Noise':0;'Sawtooth':1}" }
+							],
+							"init": 0,
+							"min": 0,
+							"max": 1,
+							"step": 1
 						},
 						{
 							"type": "vbargraph",

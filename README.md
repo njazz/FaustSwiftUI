@@ -8,8 +8,8 @@ This is a SwiftUI-based dynamic UI renderer for Faust DSP JSON metadata. It pars
 - ✅ Live binding via `@ObservedObject` with a `FaustUIViewModel`
 - ✅ Dynamic layout from `vgroup`, `hgroup`, `tgroup` primitives
 - 🔄 UI-to-DSP input controls (`hslider`, `vslider`, `checkbox`, `button` ...)
-- 🔄 DSP-to-UI output monitors (`bargraph`)
-- ❌ Style metadata (`knob`, `menu`, `radio` ...)
+- 🔄 DSP-to-UI output monitors (`hbargraph`, `vbargraph`)
+- 🔄 Style metadata (`knob`, `menu`, `radio` ...)
 
 ## Usage
 
@@ -28,7 +28,7 @@ FaustUIView(ui: ui, viewModel: FaustUIViewModel())
 | `hgroup`     | Horizontal group               | ✅          |
 | `tgroup`     | Tabbed group                   | ✅          |
 | `hslider`    | Horizontal slider              | ✅          |
-| `vslider`    | Vertical slider                | ❌          |
+| `vslider`    | Vertical slider                | ✅          |
 | `nentry`     | Number entry box               | ✅          |
 | `button`     | Momentary push button          | ✅          |
 | `checkbox`   | Toggle button                  | ✅          |
@@ -37,10 +37,21 @@ FaustUIView(ui: ui, viewModel: FaustUIViewModel())
 
 ## Supported Styles (via `[style:...]` metadata)
 
-| Style         | Description                    | Supported With |
+| Style         | Description                    | Implemented    |
 |---------------|--------------------------------|----------------|
-| `knob`        | Rotary knob                    | ❌             |
+| `knob`        | Rotary knob                    | ✅             |
 | `menu{...}`   | Dropdown menu                  | ❌             |
 | `radio{...}`  | Radio button menu              | ❌             |
 | `led`         | LED-style output               | ❌             |
 | `numerical`   | Numerical value display        | ❌             |
+
+## Supported Metadata
+
+| Key        | Description           | Implemented |
+|------------|-----------------------|-------------|
+| `style`    | Widget style          | ✅          |
+| `unit`     | Display value unit    | ❌          |
+| `scale`    | Value scaling         | ❌          |
+| `tooltip`  | Tooltip               | ❌          |
+| `hidden`   | Hidden components     | ❌          |
+

@@ -11,7 +11,7 @@ public enum FaustUIDerivedType {
     case hdbbargraph, vdbbargraph, knob, menu, radio, led, numerical
 }
 
-public enum FaustUIScale {
+public enum FaustUIScale : String, Codable{
     case linear, log, exp
 }
 
@@ -25,6 +25,9 @@ public enum FaustUIType: String, Codable {
 public struct FaustUIMeta: Codable {
     public let style: FaustUIStyle?
     public let unit: String?
+    public let scale: FaustUIScale?
+    public let tooltip: String?
+    public let hidden: Bool?    
 }
 
 public struct FaustUIJSON: Codable {
