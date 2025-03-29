@@ -53,5 +53,5 @@ FaustUIView(ui: ui, viewModel: FaustUIViewModel())
 | `unit`     | Display value unit    | ❌          |
 | `scale`    | Value scaling         | ❌          |
 | `tooltip`  | Tooltip               | ❌          |
-| `hidden`   | Hidden components     | ❌          |
+| `hidden`   | Hidden components     | ✅          |
 

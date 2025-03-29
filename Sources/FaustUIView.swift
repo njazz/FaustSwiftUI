@@ -33,9 +33,24 @@ public struct FaustUIView<ViewModelType: FaustUIValueBinding>: View {
         }
         return false
     }
+    
+    private func isHidden(_ item: FaustUI) -> Bool {
+        if let meta = item.meta {
+            for e in meta{
+                if e.hidden == 1 { return true }
+            }
+        }
+        return false
+    }
 
     @ViewBuilder
     private func render(_ item: FaustUI) -> some View {
+        // hidden items
+        if (isHidden(item))
+        {
+            EmptyView()
+        }
+        
         // style: knob
         let isKnob = isKnob(item)
         

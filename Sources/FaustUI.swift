@@ -27,7 +27,7 @@ public struct FaustUIMeta: Codable {
     public let unit: String?
     public let scale: FaustUIScale?
     public let tooltip: String?
-    public let hidden: Bool?    
+    public let hidden: Int?
 }
 
 public struct FaustUIJSON: Codable {
